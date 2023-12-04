@@ -9,8 +9,7 @@ export const RequireApi: React.FC<RequireAccountProps> = ({
   children,
 }) => {
   const { api } = useApi()
-
-  if (!api) {
+  if (!api.isConnected) {
     return <>{fallback}</>
   }
   return <>{children}</>
