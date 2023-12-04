@@ -1,4 +1,4 @@
-# Polkadot DApp Template (WIP)
+# OpenGovernance Tip Interface
 
 ## Todo
 
