@@ -18,18 +18,16 @@ const ORIGIN_SMALL_TIPPER = new Uint8Array([22, 8])
 
 const formSchema = z.object({
   sender: z.string(),
-  receiver: z.string().min(2).max(50),
+  receiver: z.string().min(48).max(48),
   amount: z.string().refine((v) => BigInt(v) * BigInt(1e12)),
 })
 
 export const ProposeTip: React.FC = () => {
   const { currentAccount, injector } = useWeb3()
-  const { api } = useApi()
+  const { api, decimals, symbol } = useApi()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      amount: "50",
-    },
+    defaultValues: {},
   })
 
   useEffect(() => {
@@ -39,26 +37,49 @@ export const ProposeTip: React.FC = () => {
   }, [currentAccount?.address, form])
 
   const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = useCallback(
-    ({ receiver, amount }) => {
-      console.log({ amount })
-      if (!api) throw new Error("api is not ready")
-      if (!injector) throw new Error("injector is not ready")
-      if (!currentAccount) throw new Error("currentAccount is not ready")
-
+    async ({ receiver, amount }) => {
       const transferCall = api.tx.balances.transferKeepAlive(receiver, amount)
 
       const referenda = api.tx.referenda.submit(
-        ORIGIN_SMALL_TIPPER,
+        // ORIGIN_SMALL_TIPPER,
+        { system: "Root" },
         { Inline: transferCall.toHex() },
         { After: 10 },
       )
 
-      return referenda.signAndSend(currentAccount?.address, {
-        signer: injector?.signer,
+      console.log("referenda", referenda.toHex())
+
+      return new Promise<void>((resolve, reject) => {
+        referenda
+          .signAndSend(
+            currentAccount!.address,
+            {
+              signer: injector?.signer,
+            },
+            (result) => {
+              console.log("result", result)
+              result.events.forEach((event) => {
+                console.log("event", event.toHuman())
+
+                if (api.events.system.ExtrinsicSuccess.is(event.event)) {
+                  console.log("ExtrinsicSuccess")
+                  resolve()
+                }
+              })
+            },
+          )
+          .catch(reject)
       })
     },
     [api, currentAccount, injector],
   )
+
+  console.log({
+    loading: form.formState.isLoading,
+    valid: form.formState.isValid,
+    submitting: form.formState.isSubmitting,
+    formState: form.formState,
+  })
 
   return (
     <div className="relative flex w-auto flex-col space-y-2 rounded-md border p-4 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:p-6 lg:p-6">
@@ -81,7 +102,7 @@ export const ProposeTip: React.FC = () => {
           <FormField
             control={form.control}
             name="amount"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem>
                 <div className="flex flex-row items-baseline space-x-1 text-sm">
                   <FormMessage />
@@ -91,19 +112,28 @@ export const ProposeTip: React.FC = () => {
                     <ToggleGroup
                       type="single"
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="rounded-md border p-1 font-mono"
+                      // defaultValue={field.value}
+                      className={cn("rounded-md border p-1 font-mono", {
+                        "border-red-200": fieldState.error,
+                      })}
                     >
-                      <ToggleGroupItem value="50">50.00</ToggleGroupItem>
-                      <ToggleGroupItem value="150">150.00</ToggleGroupItem>
-                      <ToggleGroupItem value="250">250.00</ToggleGroupItem>
+                      {[50, 150, 250]
+                        .map((v) => v * 10 ** decimals)
+                        .map((v) => (
+                          <ToggleGroupItem
+                            key={v.toString()}
+                            value={v.toString()}
+                          >
+                            {formatBalance(BigInt(v), { decimals })}
+                          </ToggleGroupItem>
+                        ))}
                     </ToggleGroup>
                   </FormControl>
                   <Button
                     variant="ghost"
-                    className="pointer-events-none px-3 shadow-none"
+                    className="pointer-events-none px-3 font-mono shadow-none"
                   >
-                    DOT
+                    {symbol}
                   </Button>
                 </div>
               </FormItem>
@@ -120,17 +150,20 @@ export const ProposeTip: React.FC = () => {
           <FormField
             control={form.control}
             name="receiver"
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <FormItem>
                 <FormControl>
                   <Input
                     autoCapitalize="off"
                     autoComplete="off"
                     placeholder="Beneficiary"
-                    className="font-mono"
+                    className={cn("font-mono", {
+                      "border-red-200": !!fieldState.error,
+                    })}
                     {...field}
                   />
                 </FormControl>
+                {fieldState.error && <span>{fieldState.error.message}</span>}
 
                 <FormMessage />
               </FormItem>
@@ -140,7 +173,14 @@ export const ProposeTip: React.FC = () => {
           <div className="-mx-6 -mb-6 mt-4 flex flex-col gap-4 rounded-b-sm border-t border-dashed bg-muted p-6">
             <div className="flex flex-col items-end justify-end">
               <div className="relative pl-2 text-right font-mono text-sm italic">
-                {formatBalance(BigInt(form.watch("amount")), { symbol: "DOT" })}
+                {form.watch("amount") ? (
+                  formatBalance(BigInt(form.watch("amount")), {
+                    symbol,
+                    decimals,
+                  })
+                ) : (
+                  <div className="h-5" />
+                )}
               </div>
               <div className="relative flex w-1/2 justify-end border-t border-muted-foreground text-xs uppercase text-muted-foreground">
                 Amount
@@ -161,6 +201,10 @@ export const ProposeTip: React.FC = () => {
                 {api?.consts
                   ? formatBalance(
                       api.consts.referenda.submissionDeposit.toBigInt(),
+                      {
+                        symbol,
+                        decimals,
+                      },
                     )
                   : null}
               </div>
@@ -180,7 +224,11 @@ export const ProposeTip: React.FC = () => {
               </div>
             </div>
             <Button
-              disabled={form.formState.isLoading || !form.formState.isValid}
+              disabled={
+                form.formState.isLoading ||
+                !form.formState.isValid ||
+                form.formState.isSubmitting
+              }
               className={cn("transition-all", {
                 "m-0 h-0 p-0": !form.formState.isValid,
               })}
