@@ -4,7 +4,6 @@ import { Connect } from "./components/Connect"
 import { ConnectionIndicator } from "./components/ConnectionIndicator"
 import { ProposeTip } from "./components/ProposeTip"
 import { ThemeToggle } from "./components/ThemeToggle"
-import { TransferValue } from "./components/TransferValue"
 import { RequireAccount } from "./components/helpers/RequireAccount"
 import { RequireApi } from "./components/helpers/RequireApi"
 import { useWeb3 } from "./providers/web3-provider"
@@ -46,6 +45,8 @@ function App() {
                 }
               >
                 <div className="grid items-center justify-center gap-6 md:p-6 ">
+                  <AccountProfile />
+
                   <ProposeTip />
                 </div>
               </RequireAccount>
