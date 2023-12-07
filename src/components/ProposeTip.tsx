@@ -42,7 +42,8 @@ export const ProposeTip: React.FC = () => {
 
       const referenda = api.tx.referenda.submit(
         // ORIGIN_SMALL_TIPPER,
-        { system: "Root" },
+        // { system: "Root" },
+        ORIGIN_SMALL_TIPPER,
         { Inline: transferCall.toHex() },
         { After: 10 },
       )
