@@ -74,3 +74,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+@layer utilities {
+  .is-draft {
+    @apply before:bg-draft-pattern before:absolute before:inset-0 before:bg-[length:18px_10px] before:opacity-15;
+  }
+}
