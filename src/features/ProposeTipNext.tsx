@@ -37,30 +37,28 @@ export const ProposeTip: React.FC<Props> = ({ className }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      amount:"50",
-      receiver:""
+      amount: "50",
+      receiver: "",
     },
   })
 
-
-  const { mutateAsync: submitReferenda } = useExtrinsic(Polkadot.tx.referenda.submit)
+  const { mutateAsync: submitReferenda } = useExtrinsic(
+    Polkadot.tx.referenda.submit,
+  )
 
   const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = useCallback(
-    ({ amount,receiver }) => {
-
-      const transfer = Polkadot.tx.balances.transferKeepAlive(receiver,amount)
-      return submitReferenda([
-
-      ])
+    ({ amount, receiver }) => {
+      const transfer = Polkadot.tx.balances.transferKeepAlive(receiver, amount)
+      return submitReferenda([])
     },
     [submitReferenda, queryClient],
   )
-
 
   return (
     <div
       className={cn(
         "relative col-span-1 flex h-full w-auto flex-col gap-4 rounded-md border p-4 md:p-6 lg:p-6",
+        "is-draft",
         className,
       )}
     >
