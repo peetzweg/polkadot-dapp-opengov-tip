@@ -2,9 +2,8 @@ import { Textarea } from "@/components/ui/textarea.js"
 import { useQueryAccount } from "@/hooks/useQueryAccount.js"
 import { formatBalance } from "@/lib/formatBalance.js"
 import { cn } from "@/lib/utils.js"
-import { useChain, useDappState } from "@/state"
+import { useChain, useDappState, useWallet } from "@/state"
 import { useMemo } from "react"
-
 
 interface Props {
   className?: string
@@ -14,13 +13,11 @@ export const AccountInfo: React.FC<Props> = ({ className }) => {
   const Polkadot = useChain("Polkadot")
   const decimals = useMemo(() => Polkadot.registry.chainDecimals[0], [Polkadot])
 
+  const { selectedAccount } = useWallet()
 
-  const pair = useDappState((s) => s.pair)
-  const mnemonic = useDappState((s) => s.mnemonic)
+  const { data } = useQueryAccount(selectedAccount?.address)
 
-  const { data } = useQueryAccount(pair?.address)
-
-  if (!pair) return null
+  if (!selectedAccount) return null
 
   return (
     <div
@@ -32,10 +29,10 @@ export const AccountInfo: React.FC<Props> = ({ className }) => {
       <>
         <div className="space-y-2">
           <h2 className="text-3xl font-extrabold leading-6 tracking-tight">
-            {pair.meta.name}
+            {selectedAccount.meta.name}
           </h2>
           <p className="mt-1 break-all font-mono text-sm text-gray-500">
-            {Polkadot.createType("AccountId32", pair.address).toString()}
+            {selectedAccount.address}
           </p>
         </div>
 
@@ -59,10 +56,6 @@ export const AccountInfo: React.FC<Props> = ({ className }) => {
             <p className="text-xs text-muted-foreground">Frozen</p>
           </div>
         </div>
-        <div>
-          <Textarea className="text-sm" readOnly rows={3} value={mnemonic} />
-        </div>
-
       </>
     </div>
   )

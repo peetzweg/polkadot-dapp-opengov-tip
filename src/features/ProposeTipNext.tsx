@@ -7,7 +7,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input.js"
-import { useExtrinsic } from "@/hooks/useExtrinsic.js"
+import { useExtrinsic, useExtrinsicAs } from "@/hooks/useExtrinsic.js"
 import { cn } from "@/lib/utils.js"
 import { useChain } from "@/state"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -42,8 +42,9 @@ export const ProposeTip: React.FC<Props> = ({ className }) => {
     },
   })
 
-  const { mutateAsync: submitReferenda } = useExtrinsic(
+  const { mutateAsync: submitReferenda } = useExtrinsicAs(
     Polkadot.tx.referenda.submit,
+    "todo" as unknown,
   )
 
   const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = useCallback(

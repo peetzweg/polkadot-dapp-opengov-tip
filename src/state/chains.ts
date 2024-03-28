@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { ApiPromise, WsProvider } from "@polkadot/api"
 import { StateCreator } from "zustand"
 import { DappState } from "."

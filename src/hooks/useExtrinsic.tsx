@@ -29,7 +29,7 @@ export const useExtrinsicAs = <
     mutationKey: [addressOrPair, extrinsicFn.meta.name],
     onSuccess: ({ block }) => {
       toast.success(
-        `Success: ${extrinsicFn.section}::${extrinsicFn.meta.name}`,
+        `Success: ${extrinsicFn.section}::${extrinsicFn.meta.name.toString()}`,
         {
           description: (
             <a
