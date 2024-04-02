@@ -1,8 +1,7 @@
-import { Textarea } from "@/components/ui/textarea.js"
 import { useQueryAccount } from "@/hooks/useQueryAccount.js"
 import { formatBalance } from "@/lib/formatBalance.js"
 import { cn } from "@/lib/utils.js"
-import { useChain, useDappState, useWallet } from "@/state"
+import { useChain, useWallet } from "dyor"
 import { useMemo } from "react"
 
 interface Props {

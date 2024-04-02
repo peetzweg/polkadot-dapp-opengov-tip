@@ -1,4 +1,4 @@
-import { useWallet } from "@/state"
+import { useWallet } from "dyor"
 
 interface Props {
   children: React.ReactNode

@@ -1,10 +1,11 @@
 /* eslint-disable no-console */
-import { useChain, useDappState } from "@/state"
-import {
+import { useChain, usePolkadotDapp } from "dyor"
+import type {
   AddressOrPair,
   SubmittableExtrinsicFunction,
 } from "@polkadot/api/types"
-import { UseMutationResult, useMutation } from "@tanstack/react-query"
+import type { UseMutationResult } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
 import { toast } from "sonner"
 
 interface ExtrinsicSuccessResult {
@@ -114,7 +115,7 @@ export const useExtrinsicAs = <
 export const useExtrinsic = (
   extrinsicFn: Parameters<typeof useExtrinsicAs>["0"],
 ): ReturnType<typeof useExtrinsicAs> => {
-  const pair = useDappState((state) => state.pair)
+  const pair = usePolkadotDapp((state) => state.pair)
   if (!pair) throw "No KeyPair Available"
   return useExtrinsicAs(extrinsicFn, pair!)
 }

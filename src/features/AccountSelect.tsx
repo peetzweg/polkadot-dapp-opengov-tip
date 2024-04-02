@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select"
-import { useWallet } from "../state"
+import { useWallet } from "dyor"
 
 interface Props {
   className?: string

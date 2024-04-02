@@ -9,6 +9,8 @@ import React from "react"
 import ReactDOM from "react-dom/client"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import App from "./App.tsx"
+import { PolkadotDappProvider } from "dyor"
+import { WsProvider } from "@polkadot/api"
 
 const router = createBrowserRouter([
   {
@@ -28,7 +30,20 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ThemeProvider defaultTheme="dark" storageKey="ui-theme">
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <PolkadotDappProvider
+          eagerConnect={true}
+          chains={
+            {
+              Polkadot: {
+                provider: new WsProvider(
+                  `wss://${import.meta.env.VITE_RPC_POLKADOT}`,
+                ),
+              },
+            } as const
+          }
+        >
+          <RouterProvider router={router} />
+        </PolkadotDappProvider>
 
         <Toaster position="bottom-center" />
 

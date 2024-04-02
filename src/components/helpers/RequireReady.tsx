@@ -1,5 +1,5 @@
-import { useDappState } from "@/state"
-import { Chains } from "@/state/chains"
+import { usePolkadotDapp } from "dyor"
+import { Chains } from "@/chains"
 
 interface Props {
   chains: (keyof typeof Chains)[]
@@ -13,7 +13,7 @@ export const RequireReady: React.FC<Props> = ({
   children,
   fallback,
 }) => {
-  const ready = useDappState((state) => state.ready)
+  const ready = usePolkadotDapp((state) => state.ready)
   const isReady = !!ready && chains.every((c) => ready[c])
 
   if (!isReady) {

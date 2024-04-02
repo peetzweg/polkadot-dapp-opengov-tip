@@ -1,16 +1,16 @@
 import { cn } from "@/lib/utils.js"
-import { useDappState } from "@/state"
+import { usePolkadotDapp } from "dyor"
 import { useQueries } from "@tanstack/react-query"
-import { Chains } from "@/state/chains"
+import { Chains } from "@/chains"
 import { cx } from "class-variance-authority"
 interface Props {
   className?: string
 }
 
 export const ChainStatus: React.FC<Props> = ({ className }) => {
-  const chains = useDappState((state) => state.api)
-  const errors = useDappState((state) => state.error)
-  const ready = useDappState((state) => state.ready)
+  const chains = usePolkadotDapp((state) => state.api)
+  const errors = usePolkadotDapp((state) => state.error)
+  const ready = usePolkadotDapp((state) => state.ready)
 
   const results = useQueries({
     queries: Object.entries(chains).map(([name, api]) => ({

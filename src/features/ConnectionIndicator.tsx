@@ -3,16 +3,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { useDappState } from "@/state"
-import { Chains } from "@/state/chains"
+import { usePolkadotDapp } from "dyor"
+import { Chains } from "@/chains"
 import { cx } from "class-variance-authority"
 import { useMemo } from "react"
 import { ChainStatus } from "./ChainStatus"
 import { Button } from "../components/ui/button"
 
 export const ConnectionIndicator: React.FC = () => {
-  const errors = useDappState((state) => state.error)
-  const ready = useDappState((state) => state.ready)
+  const errors = usePolkadotDapp((state) => state.error)
+  const ready = usePolkadotDapp((state) => state.ready)
   const isError = useMemo(
     () => !!errors && Object.values(errors).some((e) => e !== undefined),
     [errors],
