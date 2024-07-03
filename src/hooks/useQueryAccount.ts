@@ -9,6 +9,7 @@ export const useQueryAccount = (address: string | undefined) => {
   return useQuery({
     queryKey: [...QUERY_KEY, address],
     queryFn: async () => {
+      // TODO types are broken on PJS generated side
       const value = await Polkadot.query.system.account(address!)
       // const balances = await Polkadot.query.balances.account(address!)
 

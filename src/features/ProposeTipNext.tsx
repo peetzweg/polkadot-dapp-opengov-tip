@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils.js"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { BlendingModeIcon, ShadowInnerIcon } from "@radix-ui/react-icons"
 import { useQueryClient } from "@tanstack/react-query"
-import { useChain } from "dyor"
+import { useChain, useWallet } from "dyor"
 import { useCallback, useMemo } from "react"
 import type { SubmitHandler } from "react-hook-form"
 import { useForm } from "react-hook-form"
@@ -32,7 +32,8 @@ const formSchema = z.object({
 export const ProposeTip: React.FC<Props> = ({ className }) => {
   const Polkadot = useChain("Polkadot")
   const decimals = useMemo(() => Polkadot.registry.chainDecimals[0], [Polkadot])
-  const symbol = useMemo(() => "DOT", [Polkadot])
+  const symbol = useMemo(() => Polkadot.registry.chainTokens[0], [Polkadot])
+  const wallet = useWallet()
 
   const queryClient = useQueryClient()
   const form = useForm<z.infer<typeof formSchema>>({
@@ -45,7 +46,7 @@ export const ProposeTip: React.FC<Props> = ({ className }) => {
 
   const { mutateAsync: submitReferenda } = useExtrinsicAs(
     Polkadot.tx.referenda.submit,
-    "todo" as unknown,
+    wallet.selectedAccount,
   )
 
   const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = useCallback(

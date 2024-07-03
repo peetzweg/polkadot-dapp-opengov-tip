@@ -1,7 +1,7 @@
 import { useQueryAccount } from "@/hooks/useQueryAccount.js"
 import { formatBalance } from "@/lib/formatBalance.js"
 import { cn } from "@/lib/utils.js"
-import { useChain, useWallet } from "dyor"
+import { useApi, useWallet } from "dyor"
 import { useMemo } from "react"
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
 }
 
 export const AccountInfo: React.FC<Props> = ({ className }) => {
-  const Polkadot = useChain("Polkadot")
+  const Polkadot = useApi("Polkadot")
   const decimals = useMemo(() => Polkadot.registry.chainDecimals[0], [Polkadot])
 
   const { selectedAccount } = useWallet()
