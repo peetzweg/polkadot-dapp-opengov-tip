@@ -1,8 +1,8 @@
+/* eslint-disable no-unused-vars */
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly VITE_DEFAULT_RPC: string
-  // more env variables...
+  readonly VITE_RPC_POLKADOT: string
 }
 
 interface ImportMeta {

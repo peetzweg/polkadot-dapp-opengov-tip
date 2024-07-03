@@ -1,8 +1,8 @@
 import { useApi } from "../providers/api-provider"
 import { useWeb3 } from "../providers/web3-provider"
-import { Button } from "./ui/button"
-import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form"
-import { Input } from "./ui/input"
+import { Button } from "../components/ui/button"
+import { Form, FormControl, FormField, FormItem, FormMessage } from "../components/ui/form"
+import { Input } from "../components/ui/input"
 
 import * as z from "zod"
 
@@ -11,7 +11,7 @@ import { ArrowDownIcon, Pencil1Icon } from "@radix-ui/react-icons"
 import { useCallback, useEffect } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { cn } from "../lib/utils"
-import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group"
+import { ToggleGroup, ToggleGroupItem } from "../components/ui/toggle-group"
 import { formatBalance } from "../lib/formatBalance"
 
 const ORIGIN_SMALL_TIPPER = new Uint8Array([22, 8])
